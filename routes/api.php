@@ -29,13 +29,30 @@ Route::get('/posts', function () {
 Route::post('/posts', function () {
     request()->validate([
         'title' => 'required',
-        'description' => 'required'
+        'description' => 'required',
+        'website_id' => 'required'
+    ]);
+    $websiteId = request('website_id');
+    $websiteData = Website::get($websiteId);
+
+    if (!$websiteData) {
+        return [
+            'success' => false,
+            'message' => "Website doesn't doesn't exist"
+        ];
+    }
+
+    $success = Post::create([
+        'title' => request('title'),
+        'description' => request('description'),
+        'website_id' => $websiteId
     ]);
 
-    return Post::create([
-        'title' => request('title'),
-        'description' => request('description')
-    ]);
+    $message = ($success) ? "Post created successfully" : "Post creation failed";
+    return [
+        'success' => $success,
+        'message' => $message
+    ];
 });
 
 Route::post('/subscribe', function () {
@@ -69,7 +86,7 @@ Route::post('/subscribe', function () {
         'website_id' => $websiteId
     ]);
 
-    $message = ($success) ? "Subscribed successfully" : "Subscription faild";
+    $message = ($success) ? "Subscribed successfully" : "Subscription failed";
     return [
         'success' => $success,
         'message' => $message
