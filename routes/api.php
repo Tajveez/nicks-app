@@ -26,6 +26,12 @@ Route::get('/posts', function () {
     return Post::all();
 });
 
+Route::post('/create-website', function () {
+    return Website::create([
+        'name' => request('name')
+    ]);
+});
+
 Route::post('/posts', function () {
     request()->validate([
         'title' => 'required',
@@ -33,8 +39,7 @@ Route::post('/posts', function () {
         'website_id' => 'required'
     ]);
     $websiteId = request('website_id');
-    $websiteData = Website::get($websiteId);
-
+    $websiteData = Website::get('id', $websiteId);
     if (!$websiteData) {
         return [
             'success' => false,
