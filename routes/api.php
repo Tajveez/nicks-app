@@ -5,6 +5,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Website;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,8 +69,8 @@ Route::post('/subscribe', function () {
     $email = request('email');
     $websiteId = request('website_id');
 
-    $userData = User::where('email', $email);
-    $websiteData = Website::get($websiteId);
+    $userData = DB::table('users')->where('email', '=', $email)->first();
+    $websiteData = Website::where('id', $websiteId);
 
     if (!$userData) {
         return [
@@ -84,7 +85,6 @@ Route::post('/subscribe', function () {
             'message' => "Website doesn't doesn't exist"
         ];
     }
-
     $userId = $userData->id;
     $success = Subscription::create([
         'user_id' => $userId,
