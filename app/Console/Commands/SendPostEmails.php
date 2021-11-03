@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class SendPostEmails extends Command
 {
@@ -61,15 +62,16 @@ class SendPostEmails extends Command
 
     public function getAllSubscribers($websiteId)
     {
-        $websiteSubscribers = DB::table('subscriptions')->where('website_id', $websiteId)->get();
+        $websiteSubscribers = DB::table('subscriptions')->where('website_id', $websiteId)
+            ->join('users', 'users.id', '=', 'subscriptions.user_id')
+            ->get();
         return $websiteSubscribers;
     }
 
     public function sendEmail($subscribers, $content)
     {
-        foreach ($subscribers as $sub) {
-            $userData = User::get($sub->user_id);
-            $email = $userData->email;
+        foreach ($subscribers as $sub) {;
+            $email = $sub->email;
 
             Mail::to($email)->queue(new SubMail($content));
         }
