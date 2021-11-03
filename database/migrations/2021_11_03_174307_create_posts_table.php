@@ -19,7 +19,7 @@ class CreatePostsTable extends Migration
             $table->text('description');
             $table->unsignedBigInteger('website_id');
             $table->foreign('website_id')->references('id')->on('websites');
-            $table->boolean('is_sent');
+            $table->boolean('is_sent')->default(false);;
             $table->timestamps();
         });
     }
