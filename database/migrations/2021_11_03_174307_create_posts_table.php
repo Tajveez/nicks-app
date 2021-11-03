@@ -17,7 +17,8 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->primary('website_id');
+            $table->unsignedBigInteger('website_id');
+            $table->foreign('website_id')->references('id')->on('websites');
             $table->boolean('is_sent');
             $table->timestamps();
         });
